@@ -35,6 +35,14 @@ class tablaHash:
         if self.__arreglo[indice] is None:
             return f"la clave no existe"
         return f"longitud {indice}"
+
+    def imprime(self):
+        for i, elemento in enumerate(self.__arreglo):
+            if elemento is not None:
+                clave, valor= elemento
+                print(f"indice: {i}, clave: {clave}, valor: {valor}")
+            else:
+                print(f"indice {i}: vacio")
     
 N=5
 alfa=0.7
