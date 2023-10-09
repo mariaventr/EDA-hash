@@ -2,43 +2,48 @@
 #a=N/M
 #0,7=100/M
 #M=100/0,7=142
+import numpy as np
 
 class tablaHash:
     __tamaño=int
-    __capacidad=int
-    __tabla=[]
+    __arreglo=[]
     def __init__(self, tamaño):
         self.__tamaño=tamaño
-        self.__tabla=[None]* self.__tamaño
+        self.__arreglo=np.empty(tamaño, dtype=object)
         
     def hash(self, clave):
         return clave % self.__tamaño
     
+    def pruebaSecuencial(self, clave, i):
+        return (self.hash(clave)-i) % self.__tamaño # (h(k) – i * p (k) ) mod M 0 <= i <= M-1
+    
     def insertar(self, clave, valor):
-        indice=self.hash(clave)
-        if self.__tabla[indice] is None:
-            self.__tabla[indice] = (clave, valor)
-        else:
-            while self.__tabla[indice] is not None:
-                indice= (indice + 1) % self.__tamaño
-            self.__tabla[indice] = (clave, valor)
+        i=0
+        indice=self.pruebaSecuencial(clave, i)
+        while self.__arreglo[indice] is not None:
+            i+=1
+            indice= self.pruebaSecuencial(clave, i)
+        self.__arreglo[indice] = (clave, valor)
             
     def buscar(self, clave):
-        indice= self.hash(clave)
-        pruebas=1
-        while self.__tabla[indice] is not None:
-            if self.__tabla[indice][0] == clave:
-                return pruebas
-            indice = (indice + 1)% self.__tamaño
-            pruebas+=1
-        return pruebas
+        i=0
+        indice= self.pruebaSecuencial(clave, i)
+        print(indice)
+        while self.__arreglo[indice] is not None and self.__arreglo[indice][0] != clave:
+            i+=1
+            indice = self.pruebaSecuencial(clave, i)
+        if self.__arreglo[indice] is None:
+            return f"la clave no existe"
+        return f"longitud {indice}"
     
-
-noPrimo= tablaHash(10)
-claves= [13,27,42,55,67,78,89,84,101,112]
+N=5
+alfa=0.7
+M=int(N//alfa)
+hash=tablaHash(M)
+claves= [16,8,19,4,5]
 for clave in claves:
-    noPrimo.insertar(clave, "Valor")
+    hash.insertar(clave, "Valor")
 
-buscar=55
-lonSecuencia= noPrimo.buscar(buscar)
+buscar=1
+lonSecuencia= hash.buscar(buscar)
 print(f"Longitud para la clave: {lonSecuencia}")
